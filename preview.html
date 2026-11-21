@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Anniversary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Patrick+Hand&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: #050807;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Background picture: mas malaki ng konti para hindi lumabas ang gilid habang gumagalaw */
+    .bg {
+      position: fixed;
+      inset: -6%;
+      background: #050807 url("LzaRcPcD.jpg") center / cover no-repeat;
+      will-change: transform;
+    }
+
+    /* Bawat layer ay gumagalaw ng iba ang lalim (data-depth) */
+    .layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .layer > * { pointer-events: auto; }
+
+    /* Glass effect na gamit ng lahat ng buttons */
+    .glass {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .glass:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.04); }
+    .glass:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    .top {
+      top: 110px; left: 50%; translate: -50% 0;
+      width: 248px; height: 82px; font-size: 18px;
+    }
+
+    .bottom {
+      bottom: 40px; left: 50%; translate: -50% 0;
+      width: min(380px, 80vw); height: 90px; font-size: 22px;
+    }
+
+    .title {
+      position: absolute;
+      top: 50%; left: 0; width: 100%;
+      translate: 0 -50%;
+      text-align: center;
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(44px, 9vw, 78px);
+      line-height: 1.5;
+      white-space: nowrap;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .top { top: 60px; }
+    }
+
+    /* ===== GALLERY (lumalabas sa ibabaw ng page) ===== */
+    #gallery {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      overflow-y: auto;
+      background: #fff0f5;
+      color: #ff69b4;
+      font-family: "Patrick Hand", cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s, visibility 0.35s;
+    }
+    #gallery.open { opacity: 1; visibility: visible; }
+
+    #gallery .back {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 11;
+      padding: 10px 18px;
+      font-family: inherit;
+      font-size: 1.2em;
+      color: #ff69b4;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #ffb6d5;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    #gallery .back:hover { background: #fff; }
+
+    #gallery h2 {
+      margin: 70px 16px 20px;
+      font-size: 2.5em;
+      font-weight: normal;
+      text-align: center;
+    }
+
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      width: 90%;
+      max-width: 800px;
+      padding-bottom: 60px;
+    }
+
+    .gallery-row {
+      display: flex;
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    /* Zig-zag: every even row align right */
+    .gallery-row:nth-child(even) { justify-content: flex-end; }
+
+    .gallery-row img {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(255, 105, 180, 0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .gallery-row img:hover {
+      transform: scale(1.05) rotate(-1deg);
+      box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .gallery-row { justify-content: center; }
+      .gallery-row img { max-width: 80%; }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-row img { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" data-depth="-14"></div>
+
+  <div class="layer" data-depth="8">
+    <h1 class="title">
+      Happy 3 Months <span id="name">JIANAPOT</span><br />
+      Lets Celebrate This Special Day Together
+    </h1>
+  </div>
+
+  <div class="layer" data-depth="22">
+    <a class="glass top" href="letter.html">Monthsary Letter 💗</a>
+    <button type="button" class="glass bottom" id="openGallery">Our Gallery</button>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="gallery" aria-hidden="true">
+    <button type="button" class="back" id="closeGallery">← Back</button>
+    <h2>Our Memories Together 💕</h2>
+
+    <div class="gallery">
+      <div class="gallery-row"><img src="sk73ZAiP.jpg" alt="Memory 1"></div>
+      <div class="gallery-row"><img src="pAGveJ7g.jpg" alt="Memory 2"></div>
+      <div class="gallery-row"><img src="gMcUO1PT.jpg" alt="Memory 3"></div>
+      <div class="gallery-row"><img src="LBATh3iv.jpg" alt="Memory 4"></div>
+      <div class="gallery-row"><img src="9oV78-zY.jpg" alt="Memory 5"></div>
+      <div class="gallery-row"><img src="yqyLAQKb.jpg" alt="Memory 6"></div>
+      <div class="gallery-row"><img src="LRw8vPVL.jpg" alt="Memory 7"></div>
+      <div class="gallery-row"><img src="nC_l6TYP.jpg" alt="Memory 8"></div>
+      <div class="gallery-row"><img src="6jp8XHxb.jpg" alt="Memory 9"></div>
+      <div class="gallery-row"><img src="fQfeqVSQ.jpg" alt="Memory 10"></div>
+    </div>
+  </div>
+
+  <script>
+    // Parallax: sumusunod ang background at mga buttons sa galaw ng mouse
+    const items = [...document.querySelectorAll("[data-depth]")].map(el => ({
+      el,
+      depth: parseFloat(el.dataset.depth),
+    }));
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let target = { x: 0, y: 0 };   // -1 hanggang 1 (posisyon ng mouse)
+    let current = { x: 0, y: 0 };  // smooth na halaga
+
+    window.addEventListener("pointermove", e => {
+      target.x = (e.clientX / window.innerWidth) * 2 - 1;
+      target.y = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+
+    // Pag umalis ang mouse sa window, bumalik sa gitna
+    document.addEventListener("pointerleave", () => { target.x = 0; target.y = 0; });
+
+    // Para sa phone: gumagalaw ayon sa tilt (kung pinapayagan ng device)
+    window.addEventListener("deviceorientation", e => {
+      if (e.gamma == null || e.beta == null) return;
+      target.x = Math.max(-1, Math.min(1, e.gamma / 30));
+      target.y = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    });
+
+    function tick() {
+      current.x += (target.x - current.x) * 0.08;
+      current.y += (target.y - current.y) * 0.08;
+      for (const { el, depth } of items) {
+        el.style.transform =
+          `translate3d(${(-current.x * depth).toFixed(2)}px, ${(-current.y * depth).toFixed(2)}px, 0)`;
+      }
+      requestAnimationFrame(tick);
+    }
+    if (!reduce) tick();
+
+
+    const gallery = document.getElementById("gallery");
+
+    function openGallery() {
+      gallery.classList.add("open");
+      gallery.setAttribute("aria-hidden", "false");
+      gallery.scrollTop = 0;
+    }
+    function closeGallery() {
+      gallery.classList.remove("open");
+      gallery.setAttribute("aria-hidden", "true");
+    }
+
+    document.getElementById("openGallery").addEventListener("click", openGallery);
+    document.getElementById("closeGallery").addEventListener("click", closeGallery);
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeGallery(); });
+  </script>
+</body>
+</html>
